@@ -30,20 +30,36 @@ public class DBConnection {
         return connection;
     }
 
-    public void insert () throws SQLException {
+    public void inset (StringBuilder stringBuilder) {
         String sql = "INSERT INTO page(path, code, content) " +
-                "VALUES" + "(" + generateStringBuilder() + ")";
-        DBConnection.getConnection().createStatement().execute(sql);
+                "VALUES" + "(" + stringBuilder.toString() + ")";
+        try {
+            DBConnection.getConnection().createStatement().execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public String generateStringBuilder () {
+    public void runInsertBD () {
         StringBuilder stringBuilder = new StringBuilder();
+        int i = 0;
+
         for (SitePage sp : sitePageSet) {
             String patch = sp.getPatch();
             int code = sp.getCode();
             String content = sp.getContent();
             stringBuilder.append((stringBuilder.length() == 0 ? "" : ",") + "('" + patch + "', '" + code + "', '" + content + "')");
+            i++;
+
+            if (i == 500) {
+                inset(stringBuilder);
+                i = 0;
+                stringBuilder = new StringBuilder();
+            }
+
+            if(sitePageSet.isEmpty()) {
+                inset(stringBuilder);
+            }
         }
-        return stringBuilder.toString();
     }
 }

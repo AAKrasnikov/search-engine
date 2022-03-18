@@ -7,15 +7,15 @@ public class Main {
     private final static String SRC = "http://www.playback.ru/";
     public static void main(String[] args){
         Set<String> visitedPage = new HashSet<>();
-        Parse parse = new Parse(SRC, visitedPage);
+        Set<SitePage> sitePageSet = new HashSet<>();
+        Parse parse = new Parse(SRC, visitedPage, sitePageSet);
         ForkJoinPool forkJoinPool = new ForkJoinPool();
-        Set<SitePage> sitePageSet = forkJoinPool.invoke(parse);
+        forkJoinPool.invoke(parse);
         try {
             DBConnection db = new DBConnection(sitePageSet);
-            db.insert();
+            db.runInsertBD();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 }

@@ -16,11 +16,13 @@ import java.util.regex.Pattern;
 public class Parse extends RecursiveTask<Set<SitePage>> {
     private String url;
     private Set<String> visitedPage;
+    private Set<SitePage> setSitePage;
     private final static Pattern PATTERN = Pattern.compile("^\\/.+\\.html$");
 
-    public Parse(String url, Set<String> visitedPage) {
+    public Parse(String url, Set<String> visitedPage, Set<SitePage> setSitePage) {
         this.url = url;
         this.visitedPage = visitedPage;
+        this.setSitePage = setSitePage;
     }
 
     @Override
@@ -36,6 +38,7 @@ public class Parse extends RecursiveTask<Set<SitePage>> {
             list = getUrl(document);
             SitePage sp = new SitePage(url, response.statusCode(), document.toString());
             visitedPage.add(url);
+            setSitePage.add(sp);
 
             if (list.isEmpty()) {
                 result.add(sp);
@@ -44,7 +47,7 @@ public class Parse extends RecursiveTask<Set<SitePage>> {
                     if (visitedPage.contains(s)) {
                         continue;
                     }
-                    Parse task = new Parse(s, visitedPage);
+                    Parse task = new Parse(s, visitedPage, setSitePage);
                     task.fork();
                     tasks.add(task);
                 }

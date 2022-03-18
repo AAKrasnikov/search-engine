@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class SitePage {
     private String patch;
     private int code;
@@ -21,4 +23,16 @@ public class SitePage {
         return content;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SitePage sitePage = (SitePage) o;
+        return Objects.equals(patch, sitePage.patch);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(patch);
+    }
 }
