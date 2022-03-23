@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Set;
 
@@ -30,36 +31,20 @@ public class DBConnection {
         return connection;
     }
 
-    public void inset (StringBuilder stringBuilder) {
-        String sql = "INSERT INTO page(path, code, content) " +
-                "VALUES" + "(" + stringBuilder.toString() + ")";
+    public void insert () {
+        String sql = "INSERT INTO page(path, code, content) VALUES (?, ?, ?)";
+        Connection connection = null;
         try {
-            DBConnection.getConnection().createStatement().execute(sql);
+            connection = DBConnection.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            for (SitePage sp : sitePageSet) {
+                preparedStatement.setString(1, sp.getPatch());
+                preparedStatement.setInt(2, sp.getCode());
+                preparedStatement.setString(3, sp.getContent());
+                preparedStatement.execute();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-    }
-
-    public void runInsertBD () {
-        StringBuilder stringBuilder = new StringBuilder();
-        int i = 0;
-
-        for (SitePage sp : sitePageSet) {
-            String patch = sp.getPatch();
-            int code = sp.getCode();
-            String content = sp.getContent();
-            stringBuilder.append((stringBuilder.length() == 0 ? "" : ",") + "('" + patch + "', '" + code + "', '" + content + "')");
-            i++;
-
-            if (i == 500) {
-                inset(stringBuilder);
-                i = 0;
-                stringBuilder = new StringBuilder();
-            }
-
-            if(sitePageSet.isEmpty()) {
-                inset(stringBuilder);
-            }
         }
     }
 }

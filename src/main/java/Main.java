@@ -13,7 +13,7 @@ public class Main {
         forkJoinPool.invoke(parse);
         try {
             DBConnection db = new DBConnection(sitePageSet);
-            db.runInsertBD();
+            db.insert();
         } catch (SQLException e) {
             e.printStackTrace();
         }
