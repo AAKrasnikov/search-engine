@@ -11,6 +11,9 @@ public class DBConnection {
 
     private Set<SitePage> sitePageSet;
 
+    public DBConnection() {
+    }
+
     public DBConnection(Set<SitePage> sitePageSet) throws SQLException {
         this.sitePageSet = sitePageSet;
     }
@@ -19,12 +22,33 @@ public class DBConnection {
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(url, dbUser, dbPass);
+            connection.createStatement().execute("DROP TABLE IF EXISTS field");
+            connection.createStatement().execute("CREATE TABLE field(" +
+                    "id INT NOT NULL AUTO_INCREMENT primary key, " +
+                    "name VARCHAR(255) NOT NULL, " +
+                    "selector VARCHAR(255) NOT NULL, " +
+                    "weight FLOAT NOT NULL)");
+
             connection.createStatement().execute("DROP TABLE IF EXISTS page");
             connection.createStatement().execute("CREATE TABLE page(" +
                     "id INT NOT NULL AUTO_INCREMENT primary key, " +
                     "path TEXT NOT NULL, " +
                     "code INT NOT NULL, " +
                     "content MEDIUMTEXT NOT NULL)");
+
+            connection.createStatement().execute("DROP TABLE IF EXISTS lemma");
+            connection.createStatement().execute("CREATE TABLE lemma(" +
+                    "id INT NOT NULL AUTO_INCREMENT primary key, " +
+                    "lemma VARCHAR(255) NOT NULL, " +
+                    "frequency INT NOT NULL)");
+
+            connection.createStatement().execute("DROP TABLE IF EXISTS indexi");
+            connection.createStatement().execute("CREATE TABLE indexi(" +
+                    "id INT NOT NULL AUTO_INCREMENT primary key, " +
+                    "page_id INT NOT NULL, " +
+                    "lemma_id INT NOT NULL, " +
+                    "rankr FLOAT NOT NULL)");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
