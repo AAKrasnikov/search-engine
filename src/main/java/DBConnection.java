@@ -1,17 +1,16 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.List;
 import java.util.Set;
 
 public class DBConnection {
     private static String url = "jdbc:mysql://localhost:3306/search_engine";
     private static String dbUser = "root";
     private static String dbPass = "CgZAp1KD";
-
+    private Connection connection;
     private Set<SitePage> sitePageSet;
 
     public DBConnection() {
+        this.connection = getConnection();
     }
 
     public DBConnection(Set<SitePage> sitePageSet) throws SQLException {
@@ -28,6 +27,8 @@ public class DBConnection {
                     "name VARCHAR(255) NOT NULL, " +
                     "selector VARCHAR(255) NOT NULL, " +
                     "weight FLOAT NOT NULL)");
+            connection.createStatement().execute("INSERT INTO field(name, selector, weight) " +
+                    "VALUES('title', 'title', 1.0), ('body', 'body', 0.8)");
 
             connection.createStatement().execute("DROP TABLE IF EXISTS page");
             connection.createStatement().execute("CREATE TABLE page(" +
@@ -57,9 +58,7 @@ public class DBConnection {
 
     public void insert () {
         String sql = "INSERT INTO page(path, code, content) VALUES (?, ?, ?)";
-        Connection connection = null;
         try {
-            connection = DBConnection.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             for (SitePage sp : sitePageSet) {
                 preparedStatement.setString(1, sp.getPatch());
@@ -70,5 +69,9 @@ public class DBConnection {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void getContent () throws SQLException {
+        connection.createStatement().executeQuery("SELECT content FROM page");
     }
 }

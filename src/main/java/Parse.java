@@ -5,6 +5,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -59,11 +61,13 @@ public class Parse extends RecursiveTask<Set<SitePage>> {
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return result;
     }
 
-    private List<String> getUrl(Document document) {
+    private List<String> getUrl(Document document) throws SQLException, IOException {
         List<String> list = new ArrayList<>();
         Elements elements = document.select("a");
         for (Element element : elements) {
@@ -73,6 +77,23 @@ public class Parse extends RecursiveTask<Set<SitePage>> {
                 list.add("http://www.playback.ru" + link);
             }
         }
+
+        //взять боди и титл
+        String resText = document.select("title").text() + document.select("body").text();
+        List<String> listWords = new ArrayList<>();
+        Pattern pattern = Pattern.compile("[а-яА-ЯЁё]+");
+        Matcher matcher = pattern.matcher(resText);
+        while (matcher.find()) {
+            String word = resText.substring(matcher.start(), matcher.end());
+            listWords.add(word);
+        }
+
+        //очистить от предлогов... listWords
+        Set setWords = Lemmatizator.getLemms(listWords);
+        int countLemms = setWords.size();
+
+
+        //залить в бд
         return list;
     }
 }
