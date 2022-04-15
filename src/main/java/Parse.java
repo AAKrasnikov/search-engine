@@ -77,23 +77,6 @@ public class Parse extends RecursiveTask<Set<SitePage>> {
                 list.add("http://www.playback.ru" + link);
             }
         }
-
-        //взять боди и титл
-        String resText = document.select("title").text() + document.select("body").text();
-        List<String> listWords = new ArrayList<>();
-        Pattern pattern = Pattern.compile("[а-яА-ЯЁё]+");
-        Matcher matcher = pattern.matcher(resText);
-        while (matcher.find()) {
-            String word = resText.substring(matcher.start(), matcher.end());
-            listWords.add(word);
-        }
-
-        //очистить от предлогов... listWords
-        Set setWords = Lemmatizator.getLemms(listWords);
-        int countLemms = setWords.size();
-
-
-        //залить в бд
         return list;
     }
 }

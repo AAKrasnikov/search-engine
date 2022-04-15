@@ -11,12 +11,12 @@ public class Main {
 //        Parse parse = new Parse(SRC, visitedPage, sitePageSet);
 //        ForkJoinPool forkJoinPool = new ForkJoinPool();
 //        forkJoinPool.invoke(parse);
-//
-//
-//          DBConnection db = new DBConnection(sitePageSet);
-            DBConnection db = new DBConnection();
-            db.insert();
 
+
+//          DBConnection db = new DBConnection(sitePageSet);
+           DBConnection db = new DBConnection();
+ //       db.insert();
+        System.out.println(1);
 
     }
 }
