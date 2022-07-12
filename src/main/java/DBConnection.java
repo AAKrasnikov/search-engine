@@ -79,39 +79,39 @@ public class DBConnection {
         }
     }
 
-    public void createLemmBD() throws SQLException, IOException {
-        for (int id = 1; id == 0; id++) {
-            String contentSQL = "SELECT content FROM page WHERE id = " + id;
-            ResultSet rs = connection.createStatement().executeQuery(contentSQL);
-            String content = rs.getString(1);
-            Document document = Jsoup.parse(content);
-
-            String resText = document.select("title").text() + document.select("body").text();
-            List<String> listWords = new ArrayList<>();
-            Pattern pattern = Pattern.compile("[а-яА-ЯЁё]+");
-            Matcher matcher = pattern.matcher(resText);
-            while (matcher.find()) {
-                String word = resText.substring(matcher.start(), matcher.end());
-                listWords.add(word);
-            }
-
-            //listWords коллекция со словами которую очищает от лишнего с помощь getLemms
-            Set<String> setWords = Lemmatizator.getLemms(listWords);
-
-            int countLemms = setWords.size();
-
-
-            //Перебор setWords поиск вхождений в таблице
-            for(String s : setWords) {
-                String searchSQL = "SELECT * FROM lemm WHERE lemma = '" + s + "'";
-                ResultSet rsSearchSQL = connection.createStatement().executeQuery(searchSQL);
-                if(rsSearchSQL.next()) {
-                    //вставка в бд если список пустой то false если нашел значение в таблице то true значит нужно увеличить френси
-                } else {
-                    // если не нашел в таблице лемму то нужно ее вставить
-                }
-                // найти место для заполнения таблицы индекс и реализовать ее заполнение
-            }
-        }
-    }
+//    public void createLemmBD() throws SQLException, IOException {
+//        for (int id = 1; id == 0; id++) {
+//            String contentSQL = "SELECT content FROM page WHERE id = " + id;
+//            ResultSet rs = connection.createStatement().executeQuery(contentSQL);
+//            String content = rs.getString(1);
+//            Document document = Jsoup.parse(content);
+//
+//            String resText = document.select("title").text() + document.select("body").text();
+//            List<String> listWords = new ArrayList<>();
+//            Pattern pattern = Pattern.compile("[а-яА-ЯЁё]+");
+//            Matcher matcher = pattern.matcher(resText);
+//            while (matcher.find()) {
+//                String word = resText.substring(matcher.start(), matcher.end());
+//                listWords.add(word);
+//            }
+//
+//            //listWords коллекция со словами которую очищает от лишнего с помощь getLemms
+//            Set<String> setWords = Lemmatizator.getLemms(listWords);
+//
+//            int countLemms = setWords.size();
+//
+//
+//            //Перебор setWords поиск вхождений в таблице
+//            for(String s : setWords) {
+//                String searchSQL = "SELECT * FROM lemm WHERE lemma = '" + s + "'";
+//                ResultSet rsSearchSQL = connection.createStatement().executeQuery(searchSQL);
+//                if(rsSearchSQL.next()) {
+//                    //вставка в бд если список пустой то false если нашел значение в таблице то true значит нужно увеличить френси
+//                } else {
+//                    // если не нашел в таблице лемму то нужно ее вставить
+//                }
+//                // найти место для заполнения таблицы индекс и реализовать ее заполнение
+//            }
+ //      }
+ //   }
 }
