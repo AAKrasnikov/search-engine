@@ -1,10 +1,12 @@
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import javax.print.Doc;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -77,6 +79,31 @@ public class DBConnection {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void parsePageFromBD() throws SQLException {
+        ResultSet pages = connection.createStatement().executeQuery("SELECT content FROM page");
+        while(pages.next()) {
+            String content = pages.getString(1);
+            Document document = Jsoup.parse(content);
+            String contentTitle = document.select("title").text();
+            String contentBody = document.select("body").text();
+
+            // Вынести логику очищения от html тегов.
+
+
+            try {
+                Map<String, Integer> lemmTitle = Lemmatizator.getLemmm(contentTitle);
+                Map<String, Integer> lemmBody = Lemmatizator.getLemmm(contentBody);
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
     }
 
 //    public void createLemmBD() throws SQLException, IOException {

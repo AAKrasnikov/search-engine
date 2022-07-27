@@ -17,6 +17,7 @@ public class Main {
 //        DBConnection db = new DBConnection(sitePageSet);
         DBConnection db = new DBConnection();
 //        db.insert();
+        db.parsePageFromBD();
         System.out.println(1);
     }
 }

@@ -7,43 +7,40 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Lemmatizator {
-    private String text;
+    private static final Pattern patternCheckRus = Pattern.compile("^[А-Яа-яЁё]*");
+    private static final Pattern patternCheckParts = Pattern.compile("СОЮЗ|ПРЕДЛ|МЕЖД|ЧАСТ");
 
-    public Lemmatizator(String text) {
-        this.text = text;
-    }
 
-    public Map<String, Integer> getLemmm() throws IOException {
+    public static Map<String, Integer> getLemmm(String text) throws IOException {
         LuceneMorphology luceneMorph = new RussianLuceneMorphology();
-        //разбиваем текст на слова
-        String[] arrWords = text.split(" ");
-        String[] arrWordsNew = new String[arrWords.length];
+
+        String[] separateWords = text.split(" ");  //разбиваем текст на слова
+        List<String> pureWords = new ArrayList<>();
 
         //очищаем от знаков препинания и заглавных букв
-        for (int i = 0; i < arrWords.length; i++) {
-            arrWordsNew[i] = clearWord(arrWords[i]);
+        for (int i = 0; i < separateWords.length; i++) {
+            String word = separateWords[i];
+            Matcher matcher = patternCheckRus.matcher(word);
+            if (matcher.matches()) {
+                pureWords.add(clearWord(word));
+            }
         }
 
         //очищаем от СОЮЗ ПРЕДЛ МЕЖД ЧАСТ
-        Map<String, Integer> mWords = new HashMap<>();
-        Pattern pattern = Pattern.compile("^[А-Яа-яЁё]*");
-        Pattern pattern1 = Pattern.compile("СОЮЗ|ПРЕДЛ|МЕЖД|ЧАСТ");
-
-        for (String w : arrWordsNew) {
-            List<String> wordBaseForms = luceneMorph.getMorphInfo(w);
+        Map<String, Integer> resultMap = new HashMap<>();
+        for (String pw : pureWords) {
+            List<String> wordBaseForms = luceneMorph.getMorphInfo(pw);
             String s = wordBaseForms.get(0);
-            Matcher matcher = pattern.matcher(s);
-            if (matcher.find()) {
-                String key = s.substring(matcher.start(), matcher.end());
 
-                //проверить есть ли лемма в карте, если да то прибавить кол-во
-                Matcher matcher1 = pattern1.matcher(s);
-                if (!matcher1.find()) {
-                    mWords.put(key, mWords.containsKey(key) ? mWords.get(key) + 1 : 1);
-                }
+            //String key = s.substring(matcher.start(), matcher.end());
+
+            //проверить есть ли лемма в карте, если да то прибавить кол-во
+            Matcher matcher1 = patternCheckParts.matcher(s);
+            if (!matcher1.find()) {
+                resultMap.put(pw, resultMap.containsKey(pw) ? resultMap.get(pw) + 1 : 1);
             }
         }
-        return mWords;
+        return resultMap;
     }
 
     public static String clearWord(String word) {
