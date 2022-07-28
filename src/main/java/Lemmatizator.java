@@ -31,13 +31,9 @@ public class Lemmatizator {
         for (String pw : pureWords) {
             List<String> wordBaseForms = luceneMorph.getMorphInfo(pw);
             String s = wordBaseForms.get(0);
-
-            //String key = s.substring(matcher.start(), matcher.end());
-
-            //проверить есть ли лемма в карте, если да то прибавить кол-во
             Matcher matcher1 = patternCheckParts.matcher(s);
             if (!matcher1.find()) {
-                resultMap.put(pw, resultMap.containsKey(pw) ? resultMap.get(pw) + 1 : 1);
+                resultMap.put(pw, resultMap.containsKey(pw) ? resultMap.get(pw) + 1 : 1); //ПОЧЕМУ ТО ИНОГДА ПРОЛЕТАЮ ПРЕДЛОГИ
             }
         }
         return resultMap;
